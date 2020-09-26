@@ -1,62 +1,80 @@
+from functools import total_ordering
+
+
+@total_ordering
 class Point:
     def __init__(self, name, x, y):
-        self.x = x
-        self.y = y
         self.name = name
+        self.coords = (x, y)
 
     def get_x(self):
-        return self.x
+        return self.coords[0]
 
     def get_y(self):
-        return self.y
+        return self.coords[1]
+
+    def get_name(self):
+        return self.name
 
     def get_coords(self):
-        return (self.x, self.y)
-
-    def __invert__(self):
-        return Point(self.name, self.y, self.x)
+        return self.coords
 
     def __str__(self):
-        return '{}({}, {})'.format(self.name, self.x, self.y)
+        return self.name + str(self.coords)
 
     def __repr__(self):
-        return 'Point(%r, %r, %r)' % (self.name, self.x, self.y)
+        return "{}(\'{}\', {}, {})".format(self.__class__.__name__,
+                                           self.name, self.get_x(), self.get_y())
 
+    def __lt__(self, other):
+        return self.coords < other.coords
 
-class CheckMark(Point):
-    def __init__(self, a, b, c):
-        self.a = a
-        self.b = b
-        self.c = c
-    
-    def __str__(self):
-        return self.a.name + self.b.name + self.c.name
-    
-    def __bool__(self):
-        if self.a.x == self.b.x == self.c.x:
-            return False
-        elif self.a.y == self.b.y == self.c.y:
-            return False
-        elif self.a.x == self.b.x and self.a.y == self.b.y:
-            return False
-        elif self.b.x == self.c.x and self.b.y == self.c.y:
-            return False
-        elif self.a.x == self.c.x and self.a.y == self.c.y:
-            return False
-        elif self.a.x == self.a.y and self.b.x == self.b.y and self.c.x == self.c.y:
-            return False
-        elif self.a.x - self.b.x == self.b.x - self.c.x and self.a.y - self.b.y == self.b.y - self.c.y:
-            return False
-        return True
+    def __le__(self, other):
+        return self.coords <= other.coords
 
     def __eq__(self, other):
-        if self.b.x == other.b.x and self.b.y == other.b.y:
-            if self.a.x == other.a.x and self.a.y == other.a.y:
-                if self.c.x == other.c.x and self.c.y == other.c.y:
-                    
-                    return True
-            elif self.a.x == other.c.x and self.a.y == other.c.y:
-                if self.c.x == other.a.x and self.c.y == other.a.y:
-                    return True
-        return False
-    
+        return self.coords == other.coords
+
+
+class CheckMark:
+    def __init__(self, p1, p2, p3):
+        self.points = [p1, p2, p3]
+
+    def __bool__(self):
+        x1, y1 = self.points[0].get_coords()
+        x2, y2 = self.points[1].get_coords()
+        x3, y3 = self.points[2].get_coords()
+        return (x3 - x1) * (y2 - y1) != (x2 - x1) * (y3 - y1)
+
+    def __str__(self):
+        return ''.join(map(Point.get_name, self.points))
+
+    def __eq__(self, other):
+        return self.points[1] == other.points[1] and sorted(self.points[::2]) == sorted(other.points[::2])
+
+
+if __name__ == "__main__":
+    p_A = Point('A', 1, 2)
+    p_B = Point('B', 0, 1)
+    p_C = Point('C', -1, 2)
+    p_D = Point('D', 2, 2)
+    p_E = Point('E', 2, 0)
+    p_F = Point('F', 2, -1)
+    cm_ABC = CheckMark(p_A, p_B, p_C)
+    cm_DEF = CheckMark(p_D, p_E, p_F)
+    cm_ABB = CheckMark(p_A, p_B, p_B)
+    print(cm_ABC, bool(cm_ABC))
+    print(cm_DEF, bool(cm_DEF))
+    print(cm_ABB, bool(cm_ABB))
+
+    p_A = Point('A', 1, 2)
+    p_B = Point('B', 0, 1)
+    p_C = Point('C', -1, 2)
+    p_D = Point('D', -1, 2)
+    cm_ABC = CheckMark(p_A, p_B, p_C)
+    cm_CBA = CheckMark(p_C, p_B, p_A)
+    cm_ACB = CheckMark(p_A, p_C, p_B)
+    cm_ABD = CheckMark(p_A, p_B, p_D)
+    cm_DBA = CheckMark(p_D, p_B, p_A)
+    print(cm_ABC == cm_CBA, cm_ABC == cm_ABD)
+    print(cm_ABC == cm_DBA, cm_ABC == cm_ACB)
