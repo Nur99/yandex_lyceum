@@ -1,7 +1,6 @@
 import sys
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QLineEdit, QLabel, QLCDNumber
-import PyQt5.QtGui as QtGui
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QLabel, QLCDNumber
+
 
 
 class Example(QWidget):
@@ -10,63 +9,47 @@ class Example(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 300, 200)
+        self.setGeometry(450, 150, 450, 150)
         self.setWindowTitle('Миникалькулятор')
-
-        self.button_1 = QPushButton(self)
-        self.button_1.move(20, 80)
-        self.button_1.resize(100, 25)
-        self.button_1.setText('->')
-        self.button_1.clicked.connect(self.run)
-
-        self.label1 = QLabel('Первое число (целое):', self)
-        self.label1.move(20, 15)
-
-        self.label2 = QLabel('Второе число (целое):', self)
-        self.label2.move(20, 145)
-
-        self.lab_1 = QLineEdit(self)
-        self.lab_1.move(20, 30)
-        self.lab_1.resize(100, 15)
-
-        self.lab_2 = QLineEdit(self)
-        self.lab_2.move(20, 160)
-        self.lab_2.resize(100, 15)
-
-        self.summ = QLCDNumber(self)
-        self.summ.move(230, 30)
-        self.summl = QLabel('Сумма:', self)
-        self.summl.move(190, 35)
-
-        self.razn = QLCDNumber(self)
-        self.razn.move(230, 60)
-        self.raznl = QLabel('Разность:', self)
-        self.raznl.move(180, 65)
-
-        self.proiz = QLCDNumber(self)
-        self.proiz.move(230, 90)
-        self.proizl = QLabel('Произведение:', self)
-        self.proizl.move(153, 95)
-
-        self.chas = QLCDNumber(self)
-        self.chas.move(230, 120)
-        self.chasl = QLabel('Частное:', self)
-        self.chasl.move(180, 125)
-
-    def run(self):
-        f = int(self.lab_1.text())
-        s = int(self.lab_2.text())
-        self.summ.display(f + s)
-        self.razn.display(f - s)
-        self.proiz.display(f * s)
-        if s != 0:
-            self.chas.display(f / s)
-        else:
-            self.chas.display('Error')
-
+        self.btn = QPushButton('->', self)
+        self.label1 = QLineEdit(self)
+        self.label2 = QLineEdit(self)
+        self.labe1 = QLabel(self)
+        self.labe2 = QLabel(self)
+        self.labe3 = QLabel(self)
+        self.labe4 = QLabel(self)
+        self.q1 = QLCDNumber(self)
+        self.q2 = QLCDNumber(self)
+        self.q3 = QLCDNumber(self)
+        self.q4 = QLCDNumber(self)
+        self.label1.move(5, 25)
+        self.label2.move(5, 65)
+        self.btn.resize(20, 20)
+        self.btn.move(150, 55)
+        self.labe1.setText("Сумма")
+        self.labe2.setText("Разность")
+        self.labe3.setText("Произведение")
+        self.labe4.setText("Частность")
+        self.labe1.move(175, 5)
+        self.labe2.move(175, 35)
+        self.labe3.move(175, 65)
+        self.labe4.move(175, 95)
+        self.q1.move(270, 5)
+        self.q2.move(270, 35)
+        self.q3.move(270, 65)
+        self.q4.move(270, 95)
+        self.btn.clicked.connect(self.nn)
+    
+    def nn(self):
+        e = int(self.label1.text())
+        w = int(self.label2.text())
+        self.q1.display(e + w)
+        self.q2.display(e - w)
+        self.q3.display(e * w)
+        if w != 0: self.q4.display(e / w)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
     ex.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec()) 
