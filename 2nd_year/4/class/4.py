@@ -1,57 +1,65 @@
 import sys
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QLineEdit, QLabel, QLCDNumber, QCheckBox
+import PyQt5.QtGui as QtGui
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit
-from PyQt5.QtWidgets import QLabel, QCheckBox
 
-
-class Focus(QWidget):
+class Example(QWidget):
     def __init__(self):
         super().__init__()
+        self.initUI()
 
-        self.setGeometry(600, 400, 285, 130)
+    def initUI(self):
+        self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle('Прятки для виджетов')
 
-        self.show_places = []
-        show_places_row = 75
-        show_places_col = 10
-        show_places_length = 130
-        show_places_width = 20
+        self.label1 = QLabel('edit1', self)
+        self.label1.move(30, 10)
 
-        for i in range(4):
-            self.show_places.append(QLineEdit(self))
-            self.show_places[i].move(show_places_row, show_places_col)
-            self.show_places[i].resize(show_places_length, show_places_width)
-            self.show_places[i].setText('Поле edit{}'.format(i + 1))
-            show_places_col += 30
+        self.label2 = QLabel('edit2', self)
+        self.label2.move(30, 40)
 
+        self.label3 = QLabel('edit3', self)
+        self.label3.move(30, 70)
 
-        self.checkboxes = []
-        checkbox_row = 15
-        checkbox_col = 12
-        for i in range(4):
-            self.checkboxes.append(QCheckBox(self))
-            self.checkboxes[i].move(checkbox_row, checkbox_col)
-            print(self.checkboxes[i])
-            self.checkboxes[i].setText("edit{}".format(i + 1))
-            self.checkboxes[i].setChecked(False)
-            checkbox_col += 30
-            self.checkboxes[i].stateChanged.connect(self.conv)
+        self.lab_1 = QLineEdit('Поле edit1', self)
+        self.lab_1.move(60, 10)
 
+        self.lab_2 = QLineEdit('Поле edit2', self)
+        self.lab_2.move(60, 40)
 
-    def conv(self, checkbox):
-        print(self.checkboxes)
-        # position = int(checkbox.text()[-1])
-        # print(position)
-        # if checkbox.isChecked():
-        #     self.show_places[position].hide()
-        #     checkbox.setChecked(False)
-        # else:
-        #     self.show_places[position].show()
-        #     checkbox.setChecked(True)
+        self.lab_3 = QLineEdit('Поле edit3', self)
+        self.lab_3.move(60, 70)
+
+        self.box1 = QCheckBox(self)
+        self.box1.move(10, 10)
+        self.box1.h = 0
+        self.box1.connector = self.lab_1
+        self.box1.clicked.connect(self.run)
+
+        self.box2 = QCheckBox(self)
+        self.box2.move(10, 40)
+        self.box2.h = 0
+        self.box2.connector = self.lab_2
+        self.box2.clicked.connect(self.run)
+
+        self.box3 = QCheckBox(self)
+        self.box3.move(10, 70)
+        self.box3.h = 0
+        self.box3.connector = self.lab_3
+        self.box3.clicked.connect(self.run)
+
+    def run(self):
+        if self.sender().h == 0:
+            self.sender().h = 1
+            self.sender().connector.hide()
+        else:
+            self.sender().h = 0
+            self.sender().connector.show()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Focus()
+    ex = Example()
     ex.show()
     sys.exit(app.exec())
