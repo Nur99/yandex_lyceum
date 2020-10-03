@@ -1,99 +1,83 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
-from calc import Ui_Form
+
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLCDNumber
 
 
-class MyWidget(QMainWindow, Ui_Form):
+class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
-
-        ## Подключаем цифры
-        [i.clicked.connect(self.run) for i in self.buttonGroup_digits.buttons()]
-        ## Подключаем бинарные операции (+,-,*,/)
-        [i.clicked.connect(self.calc) for i in self.buttonGroup_binary.buttons()]
-        ## Подключаем точку
-        self.btn_dot.clicked.connect(self.run)
-        ## Подключаем кнопку равно
-        self.btn_eq.clicked.connect(self.result)
-        ## Подключаем кнопку очистки
+        self.t = ""
+        self.calcul = ""
+        self.expr = ""
+        uic.loadUi('calc.ui', self)
+        self.btn1.clicked.connect(self.add_number)
+        self.btn2.clicked.connect(self.add_number)
+        self.btn3.clicked.connect(self.add_number)
+        self.btn4.clicked.connect(self.add_number)
+        self.btn5.clicked.connect(self.add_number)
+        self.btn6.clicked.connect(self.add_number)
+        self.btn7.clicked.connect(self.add_number)
+        self.btn8.clicked.connect(self.add_number)
+        self.btn9.clicked.connect(self.add_number)
+        self.btn0.clicked.connect(self.add_number)
+        self.btn_pow.clicked.connect(self.add_expression)
+        self.btn_dot.clicked.connect(self.add_number)
+        self.btn_plus.clicked.connect(self.add_expression)
+        self.btn_minus.clicked.connect(self.add_expression)
+        self.btn_mult.clicked.connect(self.add_expression)
+        self.btn_div.clicked.connect(self.add_expression)
+        self.btn_eq.clicked.connect(self.calulate)
         self.btn_clear.clicked.connect(self.clear)
-        ## Подключаем унарные операции
-        self.btn_sqrt.clicked.connect(self.sqrt)
-        self.btn_fact.clicked.connect(self.fact)
+        self.btn_sqrt.clicked.connect(self.add_expression)
+        self.btn_fact.clicked.connect(self.add_expression)
 
-        ## Переменная, в которых хранятся последнее введённое число/результат вычисленного выражения
-        self.data = ''
-        ## Переменная, в которых хранятся выражение, которое нужно подсчитать
-        self.data_eval = ''
-
-    def real_fact(self, n):
-        if n < 0:
-            return -1
-        if n == 0:
-            return 1
-        else:
-            return n * self.real_fact(n - 1)
-
-    def fact(self):
-        if self.data_eval:
-            self.data_eval = "self.real_fact({})".format(self.data_eval)
-            print(self.data_eval)
-            self.result()
-
-    ## Сброс всех данных, очистка экрана
-    def clear(self):
-        self.data = ''
-        self.data_eval = ''
-        self.table.display('')
-
-    def run(self):
-        ## Формируется число, с помощью нажатий кнопок и отображается на дисплее
-        if self.sender().text() == '.':
-            if '.' in self.data:
-                return
-        if self.data != '0' or (self.data == '0' and self.sender().text() == '.'):
-            self.data = self.data + self.sender().text()
-            self.data_eval = self.data_eval + self.sender().text()
-            self.table.display(self.data)
-        else:
-            self.data = self.sender().text()
-            self.data_eval = self.sender().text()
-            self.table.display(self.data)
-
-    def sqrt(self):
-        if self.data_eval:
-            self.data_eval += '**0.5'
-            self.result()
-
-    def result(self):
-        ## Происходит попытка вычисления выражения, в случае попытки деления на 0, выводится ошибка
+    def add_number(self):
+        self.t += self.sender().text()
         try:
-            float(self.data_eval)
+            if self.t[-1] == self.t[-2] == ".":
+                self.t.pop()
         except:
-            try:
+            pass
+        if self.t != "":
+            self.table.display(self.t)
 
-                self.data = eval(self.data_eval)
-                self.data_eval = str(self.data)
-                self.table.display(self.data)
-            except ZeroDivisionError:
-                self.table.display('Error')
-            except:
-                pass
-        self.data = ''
+    def add_expression(self):
+        self.calcul += self.t
+        self.expr = self.sender().text()
+        self.calcul += self.expr
+        self.t = ""
 
-    def calc(self):
-        ## Происходит вычисление текущего выражения и дописывается новый знак. Если последним был уже знак действия, то он менятся.
-        if self.data_eval:
-            self.result()
-            if (self.data_eval[-1] not in ['+', '-', '/', '*']):
-                self.data_eval += self.sender().text()
-            else:
-                self.data_eval = self.data_eval[0:len(self.data_eval) - 1] + self.sender().text()
-            self.data_eval = self.data_eval.replace('^', '**')
+    def clear(self):
+        self.t = ""
+        self.calcul = ""
+        self.table.display("")
+
+    def calulate(self):
+        self.calcul += self.t
+        self.t = ""
+
+        if "^" in self.calcul:
+            self.calcul = self.calcul.replace("^", "**")
+
+        if '√' in self.calcul:
+            self.calcul = self.calcul.replace('√', "**0.5")
+
+        self.f = 1
+        if '!' in self.calcul:
+            self.cal = self.calcul.pop()
+            for i in range(1, int(self.cal) + 1):
+                self.f *= i
+            self.calcul = ''
+            self.calcul += self.f
+            self.calcul += '+0'
+
+        self.calcul = str(eval(self.calcul))
+        self.table.display(self.calcul)
 
 
-app = QApplication(sys.argv)
-ex = MyWidget()
-ex.show()
-sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = MyWidget()
+    ex.show()
+    sys.exit(app.exec_())
