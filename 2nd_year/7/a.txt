@@ -1,0 +1,4 @@
+data_name = "166_lyceum"
+data_password = "asmfdkdsla464__293240AAknmm"
+
+
