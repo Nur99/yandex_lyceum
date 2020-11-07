@@ -1,15 +1,16 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QPushButton, QTableWidget
 import sqlite3
 
 from PyQt5.uic.properties import QtWidgets, QtCore
+from PyQt5 import QtCore
 
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(748, 371)
-        self.tableWidget = QtWidgets.QTableWidget(Form)
+        self.tableWidget = QTableWidget(Form)
         self.tableWidget.setGeometry(QtCore.QRect(20, 60, 711, 291))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
