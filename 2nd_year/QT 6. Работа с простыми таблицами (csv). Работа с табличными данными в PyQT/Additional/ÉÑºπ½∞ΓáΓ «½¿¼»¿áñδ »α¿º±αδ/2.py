@@ -1,13 +1,15 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
-from ui import Ui_Form
 import csv
+import sys
+
+from PyQt5 import uic
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QWidget
 
 
-class MyWidget(QMainWindow, Ui_Form):
+class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi('ui.ui', self)
         self.school = ['Все']
         self.classe = {}
         self.data_name = 'rez.csv'
@@ -23,12 +25,14 @@ class MyWidget(QMainWindow, Ui_Form):
     def results(self):
         sh, k = [self.schools.currentText(), self.classes.currentText()]
         new_data = self.table_filter(sh, k)
-        self.tableWidget.setColumnCount(2)
-        self.tableWidget.setHorizontalHeaderLabels(['Фамилия', 'Результат'])
+        self.tableWidget.setColumnCount(3)
+        self.tableWidget.setHorizontalHeaderLabels(['Фамилия', 'Результат', 'Логин'])
         self.tableWidget.setRowCount(len(new_data))
         for i in range(len(new_data)):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(new_data[i][1]))
             self.tableWidget.setItem(i, 1, QTableWidgetItem(str(new_data[i][0])))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(str(new_data[i][2])))
+        self.colorFirstThreePlaces()
 
     def table_filter(self, sh, k):
         with open(self.data_name, encoding="utf8") as csvfile:
@@ -40,7 +44,7 @@ class MyWidget(QMainWindow, Ui_Form):
                     if (fio[2] == sh and fio[3] == k) or (fio[2] == sh and k == 'Все') or (
                             fio[3] == k and sh == 'Все') or ('Все' == sh == k):
                         name = row[1].split()
-                        last_name.append((int(row[7]), name[-2]))
+                        last_name.append((int(row[7]), name[-2], row[1]))
             last_name = sorted(last_name, reverse=True)
             return last_name
 
@@ -79,10 +83,40 @@ class MyWidget(QMainWindow, Ui_Form):
                         self.classe[sch] = [cls]
                 for j, elem in enumerate(row):
                     self.tableWidget.setItem(i, j, QTableWidgetItem(elem))
-        self.tableWidget.resizeColumnsToContents()
+
+    def colorRow(self, row, color):
+        for i in range(self.tableWidget.columnCount()):
+            self.tableWidget.item(row, i).setBackground(color)
+
+    def colorFirstThreePlaces(self):
+        colors = [QColor(225, 215, 0), QColor(181, 181, 189), QColor(156, 82, 33)]
+        now = 0
+        index = 0
+        color_index = 0
+        while True:
+            try:
+                tmp = int(self.tableWidget.item(index,1).text())
+            except AttributeError:
+                break
+            if tmp >= now:
+                self.colorRow(index,colors[color_index])
+                now = tmp
+            else:
+                now = tmp
+                color_index+=1
+                self.colorRow(index, colors[color_index])
+            index+=1
+            if color_index==3:
+                break
 
 
-app = QApplication(sys.argv)
-ex = MyWidget()
-ex.show()
-sys.exit(app.exec_())
+def excepthook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = MyWidget()
+    ex.show()
+    sys.excepthook = excepthook
+    sys.exit(app.exec())
