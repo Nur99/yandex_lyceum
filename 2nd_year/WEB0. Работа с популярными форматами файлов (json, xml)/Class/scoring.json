@@ -1,0 +1,93 @@
+{
+  "scoring": [
+    {
+      "points": 0,
+      "outcome": 1,
+      "required_pretests": [],
+      "required_tests": [
+        1
+      ]
+    },
+    {
+      "points": 20,
+      "outcome": 1,
+      "required_pretests": [
+        1
+      ],
+      "required_tests": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "points": 40,
+      "outcome": 1,
+      "required_pretests": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "required_tests": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "points": 30,
+      "outcome": 1,
+      "required_pretests": [
+        1
+      ],
+      "required_tests": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ]
+    },
+    {
+      "points": 10,
+      "outcome": 1,
+      "required_pretests": [
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "required_tests": [
+        29,
+        30,
+        31,
+        32,
+        33
+      ]
+    }
+  ]
+}
